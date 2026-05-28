@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ランダム出席番号チェッカー</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 50px;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333333;
+            font-size: 24px;
+        }
+        #result {
+            font-size: 72px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 30px 0;
+            min-height: 100px;
+        }
+        .info {
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 12px 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #drawBtn {
+            background-color: #28a745;
+            color: white;
+        }
+        #drawBtn:hover {
+            background-color: #218838;
+        }
+        #drawBtn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #resetBtn {
+            background-color: #dc3545;
+            color: white;
+        }
+        #resetBtn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ランダム出席番号</h1>
+    <div class="info" id="remaining">残り: 40人</div>
+    <div id="result">--</div>
+    
+    <button id="drawBtn" onclick="drawNumber()">番号を引く</button>
+    <button id="resetBtn" onclick="resetNumbers()">リセット</button>
+</div>
+
+<script>
+    const MAX_NUMBER = 40;
+    let availableNumbers = [];
+
+    // 初期化処理
+    function resetNumbers() {
+        availableNumbers = [];
+        for (let i = 1; i <= MAX_NUMBER; i++) {
+            availableNumbers.push(i);
+        }
+        document.getElementById('result').innerText = '--';
+        document.getElementById('drawBtn').disabled = false;
+        updateRemaining();
+    }
+
+    // 番号を引く処理
+    function drawNumber() {
+        if (availableNumbers.length === 0) {
+            return;
+        }
+
+        // ランダムなインデックスを生成
+        const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+        
+        // 配列から選ばれた番号を取り出す（spliceで元の配列から削除される）
+        const drawnNumber = availableNumbers.splice(randomIndex, 1)[0];
+        
+        // 画面に表示
+        document.getElementById('result').innerText = drawnNumber;
+        
+        // 残り人数の更新とボタンの制御
+        updateRemaining();
+        if (availableNumbers.length === 0) {
+            document.getElementById('result').innerText = drawnNumber + " (終了)";
+            document.getElementById('drawBtn').disabled = true;
+        }
+    }
+
+    // 残り人数の表示更新
+    function updateRemaining() {
+        document.getElementById('remaining').innerText = '残り: ' + availableNumbers.length + '人';
+    }
+
+    // ページ読み込み時に初期化を実行
+    window.onload = resetNumbers;
+</script>
+
+</body>
+</html>
