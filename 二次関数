@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>高校1年生向け 二次関数教材 y = ax²</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --accent: #2563eb;
+      --accent-light: #dbeafe;
+      --text: #111827;
+      --grid: #e5e7eb;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      padding: 1.25rem;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 0.5rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    .layout {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .left, .right {
+      flex: 1 1 260px;
+      min-width: 0;
+    }
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .equation-box {
+      background: var(--accent-light);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .equation-main {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .equation-detail {
+      font-size: 0.9rem;
+      color: #374151;
+    }
+    .slider-group {
+      margin-top: 0.5rem;
+    }
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    .slider-label-row span.value {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--grid);
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+      cursor: pointer;
+    }
+    .hint-list {
+      font-size: 0.85rem;
+      color: #4b5563;
+      margin-top: 0.75rem;
+      padding-left: 1rem;
+    }
+    .hint-list li {
+      margin-bottom: 0.25rem;
+    }
+    .graph-wrapper {
+      background: #0f172a;
+      border-radius: 0.75rem;
+      padding: 0.5rem;
+      position: relative;
+    }
+    canvas {
+      width: 100%;
+      height: 260px;
+      display: block;
+      border-radius: 0.5rem;
+      background: #020617;
+    }
+    .axis-label {
+      position: absolute;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    .axis-label.x {
+      bottom: 4px;
+      right: 12px;
+    }
+    .axis-label.y {
+      top: 8px;
+      left: 10px;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 0.4rem;
+      text-align: right;
+    }
+    @media (max-width: 640px) {
+      .card {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.2rem;
+      }
+      .subtitle {
+        font-size: 0.85rem;
+      }
+      canvas {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>二次関数のグラフと係数 a の変化</h1>
+      <p class="subtitle">高校1年生向け教材 / 関数 <strong>y = ax²</strong> のグラフが、a を変えるとどう変わるか確かめてみよう。</p>
+
+      <div class="layout">
+        <div class="left">
+          <div class="panel-title">1. 式と a の意味</div>
+          <div class="equation-box">
+            <div class="equation-main" id="equation-main">y = 1x²</div>
+            <div class="equation-detail" id="equation-detail">
+              ・a &gt; 0 のとき：上に開いた放物線<br>
+              ・a &lt; 0 のとき：下に開いた放物線<br>
+              ・|a| が大きいほど：グラフは「細く」なる（急に変化）<br>
+              ・|a| が小さいほど：グラフは「広く」なる（ゆっくり変化）
+            </div>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label-row">
+              <span>係数 a を動かしてみよう</span>
+              <span class="value" id="a-value">a = 1.0</span>
+            </div>
+            <input
+              type="range"
+              id="a-slider"
+              min="-3"
+              max="3"
+              step="0.1"
+              value="1"
+            >
+          </div>
+
+          <ul class="hint-list">
+            <li>スライダーを左に動かすと、a は負の値になり、グラフは下向きになる。</li>
+            <li>スライダーを右に動かすと、a は正の値になり、グラフは上向きになる。</li>
+            <li>a = 0 に近づけると、グラフはだんだん平らに近づくことを観察しよう。</li>
+          </ul>
+        </div>
+
+        <div class="right">
+          <div class="panel-title">2. グラフの変化を観察しよう</div>
+          <div class="graph-wrapper">
+            <canvas id="graph"></canvas>
+            <span class="axis-label x">x</span>
+            <span class="axis-label y">y</span>
+          </div>
+          <p class="note">※ スマホでも指でスライダーを動かして、グラフの形の変化を確認できます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("graph");
+    const ctx = canvas.getContext("2d");
+    const slider = document.getElementById("a-slider");
+    const aValueLabel = document.getElementById("a-value");
+    const equationMain = document.getElementById("equation-main");
+
+    // Canvas をリサイズ（スマホ対応）
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+      drawGraph(parseFloat(slider.value));
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+
+    // 座標変換用：数学座標 (-5 ≤ x ≤ 5, -5 ≤ y ≤ 5) をキャンバス座標へ
+    function toCanvasCoords(x, y, width, height) {
+      const xMin = -5, xMax = 5;
+      const yMin = -5, yMax = 5;
+      const px = (x - xMin) / (xMax - xMin) * width;
+      const py = height - (y - yMin) / (yMax - yMin) * height;
+      return { x: px, y: py };
+    }
+
+    function drawGrid(width, height) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#020617";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = "#1f2937";
+      ctx.lineWidth = 1;
+
+      // x, y 軸
+      const origin = toCanvasCoords(0, 0, width, height);
+      ctx.beginPath();
+      ctx.moveTo(0, origin.y);
+      ctx.lineTo(width, origin.y);
+      ctx.moveTo(origin.x, 0);
+      ctx.lineTo(origin.x, height);
+      ctx.stroke();
+
+      // 補助線
+      ctx.strokeStyle = "#111827";
+      ctx.lineWidth = 0.5;
+      for (let i = -5; i <= 5; i++) {
+        if (i === 0) continue;
+        // 縦線
+        let p1 = toCanvasCoords(i, -5, width, height);
+        let p2 = toCanvasCoords(i, 5, width, height);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+        // 横線
+        p1 = toCanvasCoords(-5, i, width, height);
+        p2 = toCanvasCoords(5, i, width, height);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    }
+
+    function drawGraph(a) {
+      const width = canvas.width / window.devicePixelRatio;
+      const height = canvas.height / window.devicePixelRatio;
+
+      drawGrid(width, height);
+
+      // グラフ y = ax²
+      ctx.strokeStyle = "#60a5fa";
+      ctx.lineWidth = 2;
+
+      const step = 0.05;
+      let first = true;
+
+      ctx.beginPath();
+      for (let x = -5; x <= 5; x += step) {
+        const y = a * x * x;
+        const { x: px, y: py } = toCanvasCoords(x, y, width, height);
+        if (first) {
+          ctx.moveTo(px, py);
+          first = false;
+        } else {
+          ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      // 頂点 (0, 0) を強調
+      const origin = toCanvasCoords(0, 0, width, height);
+      ctx.fillStyle = "#f97316";
+      ctx.beginPath();
+      ctx.arc(origin.x, origin.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function updateUI(a) {
+      aValueLabel.textContent = `a = ${a.toFixed(1)}`;
+      const aStr = a.toFixed(1);
+      equationMain.textContent = `y = ${aStr}x²`;
+    }
+
+    slider.addEventListener("input", () => {
+      const a = parseFloat(slider.value);
+      updateUI(a);
+      drawGraph(a);
+    });
+
+    // 初期化
+    resizeCanvas();
+    updateUI(parseFloat(slider.value));
+  </script>
+</body>
+</html>
